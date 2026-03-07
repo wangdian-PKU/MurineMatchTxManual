@@ -1,14 +1,14 @@
 ## Author: Dian Wang, Guiwen Guan
 
-![workflow](./figure/workflow.png) 
+![workflow](./figure/workflow_MurineMatchTx.png)
 
 ## Introduction
 
-The **Cross-Species Transcriptomic Similarity Analysis R package** (**CrossTx**) provides a comprehensive and user-friendly framework for evaluating transcriptional similarities between **mouse cancer models** and **human cancer samples**. Designed to streamline cross-species transcriptomic analysis, CrossTx enables rapid, multidimensional exploration with minimal preprocessing—simply input standardized files following the provided guidelines.
+The **Cross-Species Transcriptomic Similarity Analysis R package** (**MurineMatchTx**) provides a comprehensive and user-friendly framework for evaluating transcriptional similarities between **mouse cancer models** and **human cancer samples**. Designed to streamline cross-species transcriptomic analysis, MurineMatchTx enables rapid, multidimensional exploration with minimal preprocessing—simply input standardized files following the provided guidelines.
 
 The package integrates a wide array of functionalities, including differential expression gene integration and visualization, graphical display of PCA, transcriptional similarity scoring (TROM scores), immune infiltration profiling, and functional enrichment analysis (GO terms). Each function is highly customizable through flexible parameter settings, allowing researchers to tailor the analysis to specific experimental needs.
 
-With CrossTx, users can rigorously assess how closely animal models recapitulate the molecular features of human cancers, thereby facilitating translational research at the transcriptomic level.
+With MurineMatchTx, users can rigorously assess how closely animal models recapitulate the molecular features of human cancers, thereby facilitating translational research at the transcriptomic level.
 
 ---
 
@@ -21,7 +21,7 @@ You can install the package directly from GitHub:
 if (!require("devtools")) install.packages("devtools")
 
 # Install the package
-devtools::install_github("wangdian-PKU/CrossTx")
+devtools::install_github("wangdian-PKU/MurineMatchTx")
 ```
 
 ---
@@ -39,7 +39,7 @@ devtools::install_github("wangdian-PKU/CrossTx")
 
 ## Main Functions
 
-### 1. Merge_DEG_datasets()— Merge differentially expressed data from human samples or mouse models 
+### 1. Merge_DEG_datasets()— Merge differentially expressed data from human samples or mouse models
 
 #### 1.1 Purpose
 
@@ -476,7 +476,7 @@ print(barplot)
 
 The `prepare_PCA_data()` function merges **TCGA** and **mouse model expression data**, assigns **group and batch labels**, and optionally performs **batch correction**. This prepares the data for **PCA analysis and plotting** of transcriptional similarity in downstream function `plot_PCA_tinyarray()`.
 
-#### 6.2 Input Data Format 
+#### 6.2 Input Data Format
 
 Before you wanna using this fuction, you should first obtain the **homologous gene-counts matrix** files for TCGA and each mouse model, which could be obtained via the `homologene` package. The specific code and the expected data is as follows:
 
@@ -1065,7 +1065,7 @@ sig_meta <- calculate_metabolism_score(
   eset_tpm = eset_tpm,
   method = "pca",
   mini_gene_count = 2
-) 
+)
 ```
 
 #### 14.7 Notes
@@ -1220,8 +1220,8 @@ We warmly welcome contributions and suggestions! Please feel free to open an iss
 ## Contact
 
 - **Author:** *Dian Wang*, Guiwen Guan
-- **Email:** wangdian020803@gmail.com
-- **GitHub:**[CrossTx](https://github.com/wangdian-PKU/CrossTx)
+- **Email:** wangdian@bjmu.edu.cn
+- **GitHub:**[MurineMatchTx](https://github.com/wangdian-PKU/MurineMatchTx)
 
 ---
 

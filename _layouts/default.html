@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ page.title | default: site.title }}</title>
+    <meta name="description" content="{{ site.description }}">
+    <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
+  </head>
+  <body>
+    <div class="page-backdrop" aria-hidden="true"></div>
+    <div class="doc-shell">
+      <header class="doc-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">GitHub Pages Documentation</p>
+          <h1>{{ site.title }}</h1>
+          <p class="hero-summary">
+            A single-page usage manual for the MurineMatchTx R package with structured
+            navigation, improved readability, and GitHub-friendly deployment.
+          </p>
+        </div>
+        <div class="hero-meta">
+          <p><strong>Package:</strong> MurineMatchTx</p>
+          <p><strong>Repository:</strong> <a href="https://github.com/wangdian-PKU/MurineMatchTx">wangdian-PKU/MurineMatchTx</a></p>
+          <p><strong>Site Path:</strong> <code>/MurineMatchTxManual/</code></p>
+        </div>
+      </header>
+
+      <div class="doc-layout">
+        <aside class="toc-panel" aria-label="Document outline">
+          <div class="toc-panel-inner">
+            <div class="toc-heading-row">
+              <h2>On This Page</h2>
+              <button id="toc-toggle" class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-nav">
+                Sections
+              </button>
+            </div>
+            <nav id="toc-nav" class="toc-nav"></nav>
+          </div>
+        </aside>
+
+        <main class="doc-main">
+          <article class="doc-content" id="doc-content">
+            {{ content }}
+          </article>
+        </main>
+      </div>
+    </div>
+
+    <script src="{{ '/assets/js/site.js' | relative_url }}"></script>
+  </body>
+</html>
