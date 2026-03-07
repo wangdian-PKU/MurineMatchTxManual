@@ -27,6 +27,7 @@ class DocsSiteStructureTest(unittest.TestCase):
 
         self.assertIn('path: "index.md"', config)
         self.assertIn("layout: default", config)
+        self.assertIn("highlighter: rouge", config)
         self.assertIn("exclude:", config)
         self.assertIn("- docs", config)
         self.assertIn("- tests", config)
@@ -37,14 +38,25 @@ class DocsSiteStructureTest(unittest.TestCase):
         self.assertIn('id="toc-nav"', layout)
         self.assertIn("assets/css/site.css", layout)
         self.assertIn("assets/js/site.js", layout)
+        self.assertNotIn("A single-page usage manual", layout)
+        self.assertNotIn("Site Path:", layout)
 
         self.assertIn(".doc-shell", css)
         self.assertIn(".toc-panel", css)
         self.assertIn("@media (max-width: 960px)", css)
+        self.assertIn(".table-scroll", css)
+        self.assertIn(".code-block-shell", css)
+        self.assertIn(".copy-code-button", css)
+        self.assertIn("min-width: 100%", css)
+        self.assertNotIn(".doc-content table {\n  width: 100%;\n  border-collapse: collapse;\n  display: block;", css)
 
         self.assertIn("buildToc", js)
         self.assertIn("toc-nav", js)
         self.assertIn("querySelectorAll", js)
+        self.assertIn("wrapTables", js)
+        self.assertIn("addCopyButtons", js)
+        self.assertIn("navigator.clipboard.writeText", js)
+        self.assertIn("pre > code", js)
 
 
 if __name__ == "__main__":

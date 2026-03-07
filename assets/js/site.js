@@ -108,6 +108,27 @@ function buildToc() {
   return headings;
 }
 
+function wrapTables() {
+  const content = document.getElementById("doc-content");
+
+  if (!content) {
+    return;
+  }
+
+  const tables = Array.from(content.querySelectorAll("table"));
+
+  tables.forEach((table) => {
+    if (table.parentElement && table.parentElement.classList.contains("table-scroll")) {
+      return;
+    }
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "table-scroll";
+    table.parentNode.insertBefore(wrapper, table);
+    wrapper.appendChild(table);
+  });
+}
+
 function syncActiveHeading(headings) {
   if (!headings.length) {
     return;
@@ -151,8 +172,69 @@ function bindMobileTocToggle() {
   });
 }
 
+function addCopyButtons() {
+  const content = document.getElementById("doc-content");
+
+  if (!content) {
+    return;
+  }
+
+  const codeBlocks = Array.from(content.querySelectorAll("pre > code"));
+
+  codeBlocks.forEach((codeElement) => {
+    const pre = codeElement.closest("pre");
+    if (!pre) {
+      return;
+    }
+
+    const target = pre.closest(".highlighter-rouge, .highlight") || pre;
+    if (target.parentElement && target.parentElement.classList.contains("code-block-shell")) {
+      return;
+    }
+
+    const shell = document.createElement("div");
+    shell.className = "code-block-shell";
+    target.parentNode.insertBefore(shell, target);
+    shell.appendChild(target);
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "copy-code-button";
+    button.textContent = "Copy";
+
+    const status = document.createElement("span");
+    status.className = "code-copy-status";
+    status.setAttribute("aria-live", "polite");
+
+    button.addEventListener("click", async () => {
+      const codeText = codeElement.innerText;
+
+      try {
+        await navigator.clipboard.writeText(codeText);
+        button.textContent = "Copied";
+        button.classList.add("is-copied");
+        status.textContent = "Copied to clipboard";
+      } catch (error) {
+        button.textContent = "Failed";
+        status.textContent = "Clipboard unavailable";
+      }
+
+      window.setTimeout(() => {
+        button.textContent = "Copy";
+        button.classList.remove("is-copied");
+        status.textContent = "";
+      }, 1600);
+    });
+
+    shell.appendChild(button);
+    shell.appendChild(status);
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  wrapTables();
   const headings = buildToc();
   syncActiveHeading(headings);
   bindMobileTocToggle();
+  addCopyButtons();
 });
