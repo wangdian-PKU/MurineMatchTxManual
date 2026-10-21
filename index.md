@@ -12,6 +12,14 @@ With MurineMatchTx, users can rigorously assess how closely animal models recapi
 
 ---
 
+## Scope of TME and metabolism results
+
+When the current human-reference immune-deconvolution or metabolism signatures are applied to mouse samples, their results are exploratory, method-specific descriptions. They do not enter cross-species similarity scoring or model-selection decisions.
+
+These results do not establish cross-species validation without mouse-specific signatures or orthogonal immune or metabolic evidence. Interpret them as hypothesis-generating annotations alongside, rather than as inputs to, transcriptomic similarity assessment.
+
+---
+
 ## Installation
 
 You can install the package directly from GitHub:
@@ -1022,6 +1030,7 @@ eset_tpm <- TME_barplot_result$eset_tpm
 2. Supported species for TPM conversion (`count2tpm`) is currently `"hsa"` only. Modify `org =` parameter if needed.
 3. Deconvolution methods depend on package `IOBR`; make sure it's properly installed and loaded.
 4. Output will be written to `output_path` as `.pdf` and `.csv`.
+5. For mouse samples, current human-reference deconvolution results are exploratory and do not enter cross-species similarity scoring or model-selection decisions. They do not establish cross-species validation without mouse-specific signatures or orthogonal immune evidence.
 
 ---
 
@@ -1074,6 +1083,7 @@ sig_meta <- calculate_metabolism_score(
 2. PCA-based scores reflect the **first principal component** of metabolism-related gene expression.
 3. If too few genes are available for scoring (`mini_gene_count` not met), those samples may be excluded.
 4. Make sure `IOBR` is properly installed and loaded before running this function.
+5. For mouse samples, scores from current human-reference metabolism signatures are exploratory and do not enter cross-species similarity scoring or model-selection decisions. They do not establish cross-species validation without mouse-specific signatures or orthogonal metabolic evidence.
 
 ---
 
@@ -1195,6 +1205,7 @@ plot_list <- plot_TME_boxplot(
 
 - The function currently supports only the **CIBERSORT** method by default.
 - You can customize colors and themes by post-editing the **ggplot** objects returned.
+- For mouse samples, current human-reference deconvolution results are exploratory and do not enter cross-species similarity scoring or model-selection decisions. They do not establish cross-species validation without mouse-specific signatures or orthogonal immune evidence.
 
 ---
 
