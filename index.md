@@ -1083,7 +1083,7 @@ sig_meta <- calculate_metabolism_score(
 2. PCA-based scores reflect the **first principal component** of metabolism-related gene expression.
 3. If too few genes are available for scoring (`mini_gene_count` not met), those samples may be excluded.
 4. Make sure `IOBR` is properly installed and loaded before running this function.
-5. For mouse samples, scores from current human-reference metabolism signatures are exploratory and do not enter cross-species similarity scoring or model-selection decisions. They do not establish cross-species validation without mouse-specific signatures or orthogonal metabolic evidence.
+5. For mouse samples, scores from current human-reference metabolism signatures are exploratory, method-specific descriptions and do not enter cross-species similarity scoring or model-selection decisions. They do not establish cross-species validation without mouse-specific signatures or orthogonal metabolic evidence.
 
 ---
 
