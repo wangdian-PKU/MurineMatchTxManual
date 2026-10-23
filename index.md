@@ -4,19 +4,17 @@
 
 ## Introduction
 
-The **Cross-Species Transcriptomic Similarity Analysis R package** (**MurineMatchTx**) provides a comprehensive and user-friendly framework for evaluating transcriptional similarities between **mouse cancer models** and **human cancer samples**. Designed to streamline cross-species transcriptomic analysis, MurineMatchTx enables rapid, multidimensional exploration with minimal preprocessing—simply input standardized files following the provided guidelines.
+The **Cross-Species Transcriptomic Similarity Analysis R package** (**MurineMatchTx**) provides a standardized exploratory workflow for relative transcriptomic comparison between **human tumors** and **mouse cancer models**. Users define the research question, select the corresponding module and endpoint, and interpret results within the specified input data, ortholog mapping, and analytical parameters.
 
-The package integrates a wide array of functionalities, including differential expression gene integration and visualization, graphical display of PCA, transcriptional similarity scoring (TROM scores), immune infiltration profiling, and functional enrichment analysis (GO terms). Each function is highly customizable through flexible parameter settings, allowing researchers to tailor the analysis to specific experimental needs.
+MurineMatchTx connects explicit sample metadata, standardized differential expression gene (DEG) inputs, audited ortholog mapping, shared threshold objects, input validation, standardized outputs, package-native visualizations, and an executable workflow. It integrates established methods for DEG comparison, uncorrected principal component analysis (PCA), transcriptome overlap measure (TROM) scoring, Gene Ontology (GO) enrichment, and exploratory immune and metabolic profiling through documented cross-module data handoffs.
 
-With MurineMatchTx, users can rigorously assess how closely animal models recapitulate the molecular features of human cancers, thereby facilitating translational research at the transcriptomic level.
+Each module retains its own endpoint. Cross-module differences remain visible and are interpreted against the prespecified research question rather than combined into a universal score.
 
 ---
 
 ## Scope of TME and metabolism results
 
-When the current human-reference immune-deconvolution or metabolism signatures are applied to mouse samples, their results are exploratory, method-specific descriptions. They do not enter cross-species similarity scoring or model-selection decisions.
-
-These results do not establish cross-species validation without mouse-specific signatures or orthogonal immune or metabolic evidence. Interpret them as hypothesis-generating annotations alongside, rather than as inputs to, transcriptomic similarity assessment.
+With the current human-reference signatures, TME and metabolism results provide exploratory, method-specific descriptions and remain separate from model-selection endpoints. Cross-species validation requires mouse-specific signatures or orthogonal immune or metabolic evidence.
 
 ---
 
@@ -220,89 +218,76 @@ p + ggplot2::theme_minimal()
 
 #### 3.1 Purpose
 
-The `prepare_DEG_heatmap_data()` function processes **differential expression gene (DEG) results** from **TCGA** and multiple **mouse models** to prepare a standardized dataset suitable for **heatmap visualization**. It performs **significance filtering**, **homologous gene conversion**, and **logFC simplification**, returning cleaned and comparable list of matrices for downstream visualization.
+The `prepare_DEG_heatmap_data()` function normalizes DEG results from human tumors and mouse models, applies one shared threshold definition, and aligns genes through an audited ortholog mapping. It returns heatmap-ready matrices together with mapping and per-dataset gene-loss records.
 
 #### 3.2 Input Data Format
 
-See the file format requirements in the `merge_DEG_datasets()` documentation.
+DEG files may use `.tsv` or `.csv` format. Set `deg_method` to `"edgeR"`, `"DESeq2"`, `"limma"`, or `"custom"`; the first three methods use their documented fold-change and adjusted-p columns. Custom inputs require explicit `lfc_col` and `padj_col`. Gene identifiers must be row names or supplied through `gene_col`.
 
-Each DEG file (both TCGA and mouse) must contain at least the following columns:
-
-- `logFC` – log2 fold change
-- `FDR` – false discovery rate (adjusted p-value)
-
-Files must be in `.tsv` format and have gene identifiers as row names.
+The primary `ortholog_map` is a data frame containing `human_gene_id`, `mouse_gene_id`, `human_gene_id_version`, `mouse_gene_id_version`, `homology_type`, `is_high_confidence`, and `release`. Gene symbols may be retained as display labels, but stable identifiers control joins and auditing.
 
 #### 3.3 Function Parameters
 
-|  Argument   |   Type    | Default  |                         Description                          |
-| :---------: | :-------: | :------: | :----------------------------------------------------------: |
-|  tcga_file  | character | Required |            Path to the **TCGA DEG** `.tsv` file.             |
-| mouse_files |   list    | Required | A **named list of file paths** to **mouse DEG** `.tsv` files. Names will be used as column prefixes. |
-|    inTax    |  numeric  |   9606   |     Input species taxonomy ID (default: `9606` = human).     |
-|   outTax    |  numeric  |  10090   |    Output species taxonomy ID (default: `10090` = mouse).    |
+| Argument | Type | Default | Description |
+| :-- | :-- | :-- | :-- |
+| `tcga_file` | character | Required | Human DEG result file. |
+| `mouse_files` | named list | Required | Mouse DEG result files keyed by dataset or model name. |
+| `logFC`, `FDR` | numeric | `1`, `0.05` | Compatibility thresholds used when `deg_thresholds` is `NULL`. |
+| `inTax`, `outTax` | numeric | `9606`, `10090` | Taxonomy IDs used only by the explicit HomoloGene compatibility path. |
+| `deg_method` | character | `"edgeR"` | DEG format, scalar or named by dataset. |
+| `lfc_col`, `padj_col`, `gene_col` | character or `NULL` | `NULL` | Explicit input columns, scalar or named by dataset. |
+| `deg_thresholds` | list or `NULL` | `NULL` | Shared `log2fc` and `fdr` thresholds. |
+| `ortholog_map` | data frame or `NULL` | `NULL` | Required audited mapping for the primary Compara path. |
+| `mapping_source` | character | `"compara"` | Primary `"compara"` mapping or explicit `"homologene"` sensitivity/compatibility mapping. |
 
 #### 3.4 What the Function Does
 
-1. **Load and Filter TCGA Data**:
-
-   - Reads the TCGA DEG file.
-
-   - Selects genes with `|logFC| ≥ 1` and `FDR < 0.05`.
-2. **Convert Human Genes to Mouse Homologs**:
-
-   - Uses `homologene::homologene()` to map human genes to mouse homologs.
-
-   - Only genes with successful mappings are retained.
-3. **Count Up/Downregulated Genes**:
-
-   - Separates positive (`logFC > 0`) and negative (`logFC < 0`) genes.
-4. **Format TCGA logFC Values**:
-
-   - Upregulated: logFC set to `1`
-
-   - Downregulated: logFC set to `-1`
-
-   - Others: set to `NA`
-5. **Process Mouse Model Files**:
-
-   - For each file:
-     - Subsets rows to match TCGA homologs.
-     - Retains only `logFC` and `FDR` columns.
+1. Normalizes edgeR, DESeq2, limma, or explicitly mapped custom DEG columns to `gene`, `logFC`, and `FDR`.
+2. Applies the shared rule `logFC >= log2fc` or `logFC <= -log2fc`, together with `FDR < fdr`.
+3. Audits the mapping table and retains complete, high-confidence, unique `ortholog_one2one` pairs. Incomplete identifiers, one-to-many, many-to-many, low-confidence, and duplicate stable IDs are counted at separate steps; duplicate symbols are flagged as display-label ambiguity.
+4. Aligns significant human DEGs to retained mouse orthologs and records human and mouse gene losses in `gene_loss_audit`.
+5. Encodes directionally concordant mouse genes as `1` or `-1`; absent, stable, or discordant genes remain `NA`.
 
 #### 3.5 Output
 
 Returns a **named list** with the following components:
 
-|      Name       |       Type       |                         Description                          |
-| :-------------: | :--------------: | :----------------------------------------------------------: |
-| processed_tcga  |    data.frame    |          Filtered and formatted **TCGA DEG matrix**          |
-| processed_mouse |       list       | List of **processed mouse model DEG matrices**, each with standardized logFC values |
-| tcga_gene_list  | character vector |    Final set of **homologous genes** retained in analysis    |
+| Name | Type | Description |
+| :-- | :-- | :-- |
+| `processed_tcga` | data frame | Significant human DEG values retained after primary mapping. |
+| `processed_mouse` | list | Directional concordance and FDR values for each mouse dataset. |
+| `tcga_gene_list` | character vector | Retained human stable gene identifiers. |
+| `mapping_audit` | data frame | Stepwise audit of mapping-table completeness, homology type, confidence, duplicate IDs, and symbol ambiguity. |
+| `gene_loss_audit` | data frame | Per-dataset `input_genes`, `removed_genes`, and `retained_genes` across normalization, significance, mapping, and selected-ortholog presence steps. |
+| `ortholog_map` | data frame | Retained unique high-confidence one-to-one mapping. |
+| `deg_thresholds` | list | Validated `log2fc` and `fdr` thresholds used by the analysis. |
 
 #### 3.6 Run Example
 
 ```R
-# Define file paths
 tcga_path <- "./data/TCGA_DEG.tsv"
 mouse_files <- list(
   "Our_Model" = "./data/Our_Model_DEG.tsv",
   "GSE172629" = "./data/GSE172629_DEG.tsv"
 )
+ortholog_map <- read.delim("./data/ensembl_compara_116_one_to_one.tsv")
 
-# Run preprocessing
-processed_data <- prepare_DEG_heatmap_data(tcga_path, mouse_files)
+processed_data <- prepare_DEG_heatmap_data(
+  tcga_file = tcga_path,
+  mouse_files = mouse_files,
+  deg_method = c(TCGA = "DESeq2", Our_Model = "edgeR", GSE172629 = "limma"),
+  deg_thresholds = list(log2fc = 1, fdr = 0.05),
+  ortholog_map = ortholog_map
+)
 
-# View output
-head(processed_data$processed_tcga)
-head(processed_data$processed_mouse$Our_Model)
-
+processed_data$mapping_audit
+processed_data$gene_loss_audit
 ```
 
 #### 3.7 Note
 
-1. The returned output is ready for use in the `plot_DEG_heatmap()` functions.
-2. The logFC simplification logic ensures compatibility across datasets and makes interpretation of heatmaps more intuitive.
+1. Use Ensembl Compara or another frozen, versioned mapping table for the primary analysis. `mapping_source = "homologene"` is an explicit sensitivity or compatibility path.
+2. The returned object is the input to `plot_DEG_heatmap()`; retain both audit tables with the analysis provenance.
 
 ---
 
