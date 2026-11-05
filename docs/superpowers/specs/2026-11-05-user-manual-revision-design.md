@@ -2,23 +2,23 @@
 
 ## Goal
 
-Revise the English user manual so that it documents the current package interface through the COAD, LUAD, and BRCA analysis workflows and explains each module within the package's intended exploratory scope.
+Revise the English user manual function by function so that each entry documents the current package interface, tells users how to prepare the required inputs, provides an adaptable example, and explains the result within the package's intended exploratory scope.
 
 ## Scope
 
 - Keep `index.md` as the single user-facing manual.
 - Preserve the existing Jekyll layout and navigation.
-- Add a reproducible workflow shared by the three cancer-type examples.
-- Align function arguments, inputs, outputs, and examples with the installed package source and the three `wangdian_manual_figure_*.R` scripts.
-- Add representative outputs from `manual_figures` as manual assets when they clarify interpretation.
+- Revise the existing introduction, shared input guidance, and 16 function entries without restructuring the site into a multi-page tutorial.
+- Align function arguments, inputs, outputs, and examples with the installed package source. Use the COAD, LUAD, and BRCA scripts and their generated figures as implementation evidence.
+- Write concise, generic examples that users can adapt to their own paths, datasets, and model names. The manual will not reproduce the three analysis scripts verbatim.
 - Modify only the `MurineMatchTxManual` repository. Package source, analysis scripts, datasets, and manuscript files remain unchanged.
 
 ## Content Structure
 
 1. Introduce MurineMatchTx as a standardized exploratory workflow for relative transcriptomic comparison.
-2. Define the shared inputs, metadata schema, orthology mapping, thresholds, and output conventions.
-3. Present a concise end-to-end example that users can adapt to COAD, LUAD, or BRCA through a cancer-specific configuration block.
-4. Retain the function reference and update every entry to match the current interface.
+2. Replace the current general input list with preparation instructions for DEG tables, expression matrices, sample metadata, orthology mappings, TPM matrices, and optional clinical or CNV annotations.
+3. Retain the function reference and update every entry to match the current interface.
+4. Give each function entry the same practical sequence: purpose, prepared input, current arguments, returned value and files, adaptable example, and interpretation notes.
 5. Explain module-specific interpretation:
    - DEG: direction, coverage, and effect-size concordance relative to the stated thresholds.
    - Uncorrected PCA: global structure, outliers, source separation, and potential confounding.
@@ -34,8 +34,8 @@ Use direct, natural technical English. State each function's purpose, prerequisi
 ## Verification
 
 - Compare documented signatures with the package source.
-- Check that the three example configurations match their analysis scripts.
+- Check that examples use the same validated data flow demonstrated by the three analysis scripts without copying cancer-specific paths or complete scripts.
 - Run the existing documentation-site test.
 - Scan internal links and referenced assets.
 - Scan for prohibited or overbroad claims from the terminology specification.
-- review the final diff to confirm that no R package file or analysis script changed.
+- Review the final diff to confirm that no R package file or analysis script changed.
