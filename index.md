@@ -6,14 +6,14 @@ Dian Wang and Guiwen Guan
 
 ## Introduction
 
-**MurineMatchTx** provides a standardized exploratory workflow for relative transcriptomic comparison between human tumors and mouse cancer models. The package connects explicit input contracts, audited ortholog mapping, shared analysis parameters, module-specific outputs, and package-native visualizations.
+**MurineMatchTx** provides a standardized exploratory workflow for relative transcriptomic comparison between human tumors and mouse cancer models. The package connects explicit input contracts, audited ortholog mapping,module-specific outputs, and package-native visualizations.
 
 Select each module according to a prespecified research question and endpoint:
 
 | Module | Primary use |
 | :-- | :-- |
 | DEG comparison | Compare tumor-versus-normal regulation direction, coverage, and effect size under a shared threshold definition. |
-| Uncorrected PCA | Examine global expression structure, outliers, dataset separation, and potential confounding. |
+| PCA | Examine global expression structure, outliers, dataset separation, and potential confounding. |
 | TROM | Compare sample-associated gene-set overlap under the selected expression data, mapping, and parameters. |
 | GO enrichment | Summarize enriched functional themes under the selected DEG definition and organism annotation. |
 | TME profiling | Describe immune-cell estimates produced by a selected human-reference deconvolution method. |
